@@ -1,5 +1,7 @@
 import Navbar from "@/components/layout/navbar";
 import HeroSection from "@/components/landing/hero-section";
+import CompaniesSection from "@/components/landing/companies-section";
+import CategoriesSection from "@/components/landing/categories-section";
 
 export default function Home() {
   return (
@@ -7,6 +9,8 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <HeroSection />
+        <CompaniesSection />
+        <CategoriesSection />
       </main>
     </>
   );
