@@ -55,10 +55,6 @@ function formatStatus(status: string) {
   return styles[status] || "bg-slate-50 text-slate-700 border-slate-200";
 }
 
-function formatType(type: string) {
-  return type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
