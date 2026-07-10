@@ -69,37 +69,26 @@ export default function DashboardPage() {
     }
 
     if (status === "authenticated") {
-      if (session.user.role === "SEEKER") {
-        fetchApplications();
-      } else {
-        fetchEmployerJobs();
-      }
+      const fetchData = async () => {
+        try {
+          if (session.user.role === "SEEKER") {
+            const res = await fetch("/api/applications");
+            const data = await res.json();
+            setApplications(data);
+          } else {
+            const res = await fetch("/api/employer/jobs");
+            const data = await res.json();
+            setEmployerJobs(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch data:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchData();
     }
   }, [status, session, router]);
-
-  const fetchApplications = async () => {
-    try {
-      const res = await fetch("/api/applications");
-      const data = await res.json();
-      setApplications(data);
-    } catch (error) {
-      console.error("Failed to fetch applications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchEmployerJobs = async () => {
-    try {
-      const res = await fetch("/api/employer/jobs");
-      const data = await res.json();
-      setEmployerJobs(data);
-    } catch (error) {
-      console.error("Failed to fetch jobs:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (status === "loading" || loading) {
     return (
@@ -348,11 +337,10 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-3 shrink-0">
                           <Badge
                             variant="outline"
-                            className={`text-[10px] ${
-                              job.status === "OPEN"
+                            className={`text-[10px] ${job.status === "OPEN"
                                 ? "bg-green-50 text-green-700 border-green-200"
                                 : "bg-slate-50 text-slate-600 border-slate-200"
-                            }`}
+                              }`}
                           >
                             {job.status}
                           </Badge>

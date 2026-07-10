@@ -76,14 +76,15 @@ export default function JobsPage() {
   const [selectedType, setSelectedType] = useState(searchParams.get("type") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (type?: string, category?: string) => {
     setLoading(true);
     const params = new URLSearchParams();
     if (keyword) params.set("q", keyword);
     if (location) params.set("location", location);
-    if (selectedType) params.set("type", selectedType);
-    if (selectedCategory && selectedCategory !== "All Categories")
-      params.set("category", selectedCategory);
+    const t = type ?? selectedType;
+    const c = category ?? selectedCategory;
+    if (t) params.set("type", t);
+    if (c && c !== "All Categories") params.set("category", c);
 
     try {
       const res = await fetch(`/api/jobs?${params.toString()}`);
@@ -97,8 +98,24 @@ export default function JobsPage() {
   };
 
   useEffect(() => {
-    fetchJobs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const loadJobs = async () => {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (selectedType) params.set("type", selectedType);
+      if (selectedCategory && selectedCategory !== "All Categories")
+        params.set("category", selectedCategory);
+
+      try {
+        const res = await fetch(`/api/jobs?${params.toString()}`);
+        const data = await res.json();
+        setJobs(data);
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadJobs();
   }, [selectedType, selectedCategory]);
 
   const handleSearch = (e: React.FormEvent) => {
