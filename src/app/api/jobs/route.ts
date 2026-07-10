@@ -11,13 +11,17 @@ export async function GET(req: Request) {
     const location = searchParams.get("location") || "";
     const category = searchParams.get("category") || "";
     const type = searchParams.get("type") || "";
+    const featured = searchParams.get("featured");
+    const limit = searchParams.get("limit");
 
-    // Build the filter conditions
     const where: Record<string, unknown> = {
       status: "OPEN",
     };
 
-    // Search by keyword (matches title, company, or description)
+    if (featured === "true") {
+      where.featured = true;
+    }
+
     if (q) {
       where.OR = [
         { title: { contains: q, mode: "insensitive" } },
@@ -44,6 +48,7 @@ export async function GET(req: Request) {
     const jobs = await prisma.job.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      take: limit ? parseInt(limit) : undefined,
       include: {
         employer: {
           select: { name: true, avatar: true },
