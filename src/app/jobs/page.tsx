@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { JobListSkeleton } from "@/components/skeletons/job-card-skeleton";
 import {
   Search,
   MapPin,
@@ -224,9 +225,7 @@ function JobsContent() {
 
             <div className="flex-1">
               {loading ? (
-                <div className="flex items-center justify-center py-20">
-                  <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
-                </div>
+                <JobListSkeleton count={6} />
               ) : jobs.length === 0 ? (
                 <div className="text-center py-20">
                   <Briefcase className="w-12 h-12 text-slate-300 mx-auto mb-4" />

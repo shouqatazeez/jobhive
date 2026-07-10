@@ -9,6 +9,7 @@ import Footer from "@/components/layout/footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Briefcase,
   MapPin,
@@ -111,8 +112,39 @@ export default function JobDetailPage() {
       <>
         <Navbar />
         <main className="flex-1 bg-slate-50">
-          <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Skeleton className="h-4 w-24 mb-6" />
+            <div className="grid lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                <Card className="p-6 sm:p-8 border-slate-200">
+                  <div className="flex items-start gap-4">
+                    <Skeleton className="w-14 h-14 rounded-xl shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-6 w-2/3" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <div className="flex gap-2 mt-3">
+                        <Skeleton className="h-5 w-20 rounded-md" />
+                        <Skeleton className="h-5 w-24 rounded-md" />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+                <Card className="p-6 sm:p-8 border-slate-200 space-y-3">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-4/5" />
+                </Card>
+              </div>
+              <div className="flex flex-col gap-6">
+                <Card className="p-6 border-slate-200 space-y-4">
+                  <Skeleton className="h-11 w-full rounded-xl" />
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                </Card>
+              </div>
+            </div>
           </div>
         </main>
       </>
@@ -204,7 +236,7 @@ export default function JobDetailPage() {
                   <button
                     onClick={handleApply}
                     disabled={applying}
-                    className="w-full inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors text-sm cursor-pointer disabled:opacity-50"
+                    className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors text-sm cursor-pointer disabled:opacity-50"
                   >
                     {applying ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -213,14 +245,14 @@ export default function JobDetailPage() {
                     )}
                   </button>
                 ) : applied ? (
-                  <div className="w-full inline-flex items-center justify-center gap-2 bg-green-50 text-green-700 font-semibold px-6 py-3 rounded-xl border border-green-200 text-sm">
+                  <div className="inline-flex items-center justify-center gap-2 bg-green-50 text-green-700 font-semibold px-6 py-3 rounded-xl border border-green-200 text-sm">
                     <CheckCircle2 className="w-4 h-4" />
                     Application Submitted
                   </div>
                 ) : !session ? (
                   <Link
                     href="/login"
-                    className="w-full inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors text-sm"
+                    className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors text-sm"
                   >
                     Login to Apply
                   </Link>

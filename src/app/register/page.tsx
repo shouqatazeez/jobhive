@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,12 +35,25 @@ export default function RegisterPage() {
 
       if (!res.ok) {
         setError(data.error || "Something went wrong");
+        setLoading(false);
+        return;
+      }
+
+      // Auto sign-in after successful registration
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        router.push("/login");
       } else {
-        router.push("/login?registered=true");
+        router.push("/dashboard");
+        router.refresh();
       }
     } catch {
       setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
