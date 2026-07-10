@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Mail, User as UserIcon, Briefcase } from "lucide-react";
+import { Mail, User as UserIcon, Briefcase } from "lucide-react";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();

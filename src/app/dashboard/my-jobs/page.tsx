@@ -49,22 +49,20 @@ export default function MyJobsPage() {
                 router.push("/dashboard");
                 return;
             }
-            fetchJobs();
+            const loadJobs = async () => {
+                try {
+                    const res = await fetch("/api/employer/jobs");
+                    const data = await res.json();
+                    setJobs(Array.isArray(data) ? data : []);
+                } catch (error) {
+                    console.error("Failed to fetch jobs:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            loadJobs();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [status, session]);
-
-    const fetchJobs = async () => {
-        try {
-            const res = await fetch("/api/employer/jobs");
-            const data = await res.json();
-            setJobs(Array.isArray(data) ? data : []);
-        } catch (error) {
-            console.error("Failed to fetch jobs:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [status, session, router]);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this job posting?")) return;
@@ -160,8 +158,8 @@ export default function MyJobsPage() {
                                     <Badge
                                         variant="outline"
                                         className={`text-[10px] ${job.status === "OPEN"
-                                                ? "bg-green-50 text-green-700 border-green-200"
-                                                : "bg-slate-50 text-slate-600 border-slate-200"
+                                            ? "bg-green-50 text-green-700 border-green-200"
+                                            : "bg-slate-50 text-slate-600 border-slate-200"
                                             }`}
                                     >
                                         {job.status}
