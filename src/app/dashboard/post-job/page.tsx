@@ -46,15 +46,70 @@ export default function PostJobPage() {
     requirements: "",
   });
 
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
+
+  const validateSalary = (value: string): string => {
+    if (!value.trim()) return "";
+    const salaryPattern = /^[₹$€£]?\s*\d+[.,]?\d*\s*[LKMlkm]?\s*[-–to]*\s*[₹$€£]?\s*\d*[.,]?\d*\s*[LKMlkm]?\s*[/]?\s*\w*$/;
+    if (!salaryPattern.test(value.trim())) {
+      return "Enter a valid salary (e.g. ₹10L - ₹15L/year or $50K - $80K)";
+    }
+    return "";
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Real-time validation for salary if field was already touched
+    if (name === "salary" && touchedFields.salary) {
+      setFieldErrors({ ...fieldErrors, salary: validateSalary(value) });
+    }
+
+    // Clear other field errors when user starts typing
+    if (name !== "salary" && fieldErrors[name]) {
+      setFieldErrors({ ...fieldErrors, [name]: "" });
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "salary") {
+      setTouchedFields({ ...touchedFields, salary: true });
+      setFieldErrors({ ...fieldErrors, salary: validateSalary(value) });
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    if (!form.title.trim()) errors.title = "Job title is required";
+    if (!form.company.trim()) errors.company = "Company name is required";
+    if (!form.location.trim()) errors.location = "Location is required";
+    if (!form.description.trim()) errors.description = "Description is required";
+    if (!form.requirements.trim()) errors.requirements = "Requirements are required";
+
+    // Salary validation: must be empty or match a valid format (numbers, ₹, $, L, K, -, /, spaces)
+    if (form.salary.trim()) {
+      const salaryPattern = /^[₹$€£]?\s*\d+[.,]?\d*\s*[LKMlkm]?\s*[-–to]*\s*[₹$€£]?\s*\d*[.,]?\d*\s*[LKMlkm]?\s*[/]?\s*\w*$/;
+      if (!salaryPattern.test(form.salary.trim())) {
+        errors.salary = "Enter a valid salary (e.g. ₹10L - ₹15L/year or $50K - $80K)";
+      }
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!validateForm()) return;
+
     setLoading(true);
 
     try {
@@ -162,8 +217,12 @@ export default function PostJobPage() {
                 placeholder="e.g. ₹10L - ₹15L/year"
                 value={form.salary}
                 onChange={handleChange}
-                className="h-11"
+                onBlur={handleBlur}
+                className={`h-11 ${fieldErrors.salary ? "border-red-400 focus-visible:border-red-400 focus-visible:ring-red-100" : ""}`}
               />
+              {fieldErrors.salary && (
+                <p className="text-xs text-red-500">{fieldErrors.salary}</p>
+              )}
             </div>
           </div>
 
