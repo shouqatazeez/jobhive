@@ -45,7 +45,7 @@ export default function CategoriesSection() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
             <Link key={category.name} href={`/jobs?category=${category.name}`}>
-              <Card className="group p-8 cursor-pointer border border-slate-100 rounded-none bg-white hover:border-indigo-200 hover:shadow-sm transition-all">
+              <Card className="group p-8 cursor-pointer border border-slate-100 rounded-lg bg-white hover:border-indigo-200 hover:shadow-sm transition-all">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-indigo-50">
                     <category.icon className="w-6 h-6 text-indigo-600" />

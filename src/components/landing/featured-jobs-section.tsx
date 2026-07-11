@@ -79,7 +79,7 @@ export default function FeaturedJobsSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {jobs.map((job) => (
               <Link key={job.id} href={`/jobs/${job.id}`}>
-                <Card className="group p-6 h-full border border-slate-100 rounded-none bg-white hover:border-indigo-200 hover:shadow-sm transition-all cursor-pointer">
+                <Card className="group p-6 h-full border border-slate-100 rounded-lg bg-white hover:border-indigo-200 hover:shadow-sm transition-all cursor-pointer">
                   <div className="flex flex-col gap-3 h-full">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-white border border-slate-100 overflow-hidden p-2">
@@ -91,7 +91,7 @@ export default function FeaturedJobsSection() {
                       </div>
                       <Badge
                         variant="outline"
-                        className="text-xs font-medium border-indigo-200 text-indigo-600 rounded-none px-3 py-1"
+                        className="text-xs font-medium border-indigo-200 text-indigo-600 rounded-full px-3 py-1"
                       >
                         {formatType(job.type)}
                       </Badge>
@@ -111,7 +111,7 @@ export default function FeaturedJobsSection() {
 
                     <div className="flex items-center gap-2 flex-wrap mt-2">
                       <span
-                        className={`text-xs font-medium px-3 py-1 rounded-none ${
+                        className={`text-xs font-medium px-3 py-1 rounded-full ${
                           categoryColors[job.category] || "bg-slate-100 text-slate-700"
                         }`}
                       >
