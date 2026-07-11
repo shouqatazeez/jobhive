@@ -21,17 +21,17 @@ function formatType(type: string) {
 }
 
 const categoryColors: Record<string, string> = {
-  Technology: "bg-indigo-100 text-indigo-700",
-  Engineering: "bg-blue-100 text-blue-700",
-  Design: "bg-purple-100 text-purple-700",
-  Marketing: "bg-orange-100 text-orange-700",
-  Sales: "bg-green-100 text-green-700",
-  Business: "bg-amber-100 text-amber-700",
-  Finance: "bg-emerald-100 text-emerald-700",
-  "Human Resource": "bg-teal-100 text-teal-700",
+  Technology: "border border-slate-300 text-slate-700 bg-transparent",
+  Engineering: "border border-slate-300 text-slate-700 bg-transparent",
+  Design: "border border-slate-300 text-slate-700 bg-transparent",
+  Marketing: "border border-emerald-400 text-emerald-600 bg-transparent",
+  Sales: "border border-emerald-400 text-emerald-600 bg-transparent",
+  Business: "border border-slate-300 text-slate-700 bg-transparent",
+  Finance: "border border-indigo-300 text-indigo-600 bg-transparent",
+  "Human Resource": "border border-teal-300 text-teal-600 bg-transparent",
 };
 
-const typeColor = "border border-indigo-600 text-indigo-600 bg-transparent";
+const typeColor = "bg-orange-50 text-orange-600 border border-orange-200";
 
 export default function LatestJobsSection() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -53,7 +53,7 @@ export default function LatestJobsSection() {
   }, []);
 
   return (
-    <section className="py-[72px] bg-white">
+    <section className="py-[72px] bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-12">
           <h2 className="text-3xl sm:text-[40px] font-bold text-slate-900 leading-tight">
@@ -69,13 +69,17 @@ export default function LatestJobsSection() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 py-5 border-b border-slate-100">
-                <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+              <div key={i} className="flex items-center gap-4 p-5 rounded-lg border border-slate-200 bg-white">
+                <Skeleton className="w-14 h-14 rounded-full shrink-0" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-2/5" />
                   <Skeleton className="h-3 w-1/3" />
+                  <div className="flex gap-2 mt-1">
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                    <Skeleton className="h-6 w-20 rounded-full" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -85,15 +89,15 @@ export default function LatestJobsSection() {
             No jobs available right now.
           </p>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {jobs.map((job) => (
               <Link key={job.id} href={`/jobs/${job.id}`}>
-                <div className="group flex items-start gap-4 py-5 border-b border-slate-100 hover:bg-slate-50/50 transition-colors cursor-pointer -mx-2 px-2">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 shrink-0 overflow-hidden p-2">
+                <div className="group flex items-start gap-4 p-5 rounded-lg border border-slate-200 bg-white shadow-sm hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer">
+                  <div className="flex items-center justify-center w-14 h-14 rounded-full bg-indigo-50 border border-indigo-100 shrink-0 overflow-hidden p-2.5">
                     {job.logo ? (
-                      <Image src={job.logo} alt={job.company} width={40} height={40} className="object-contain w-full h-full" />
+                      <Image src={job.logo} alt={job.company} width={48} height={48} className="object-contain w-full h-full" />
                     ) : (
-                      <Briefcase className="w-5 h-5 text-indigo-600" />
+                      <Briefcase className="w-6 h-6 text-indigo-600" />
                     )}
                   </div>
 
@@ -104,11 +108,11 @@ export default function LatestJobsSection() {
                     <p className="text-sm text-slate-500 mt-0.5">
                       {job.company} · {job.location}
                     </p>
-                    <div className="flex items-center gap-2 flex-wrap mt-2">
-                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${typeColor}`}>
+                    <div className="flex items-center gap-2 flex-wrap mt-3">
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${typeColor}`}>
                         {formatType(job.type)}
                       </span>
-                      <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${categoryColors[job.category] || "bg-slate-100 text-slate-700"}`}>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${categoryColors[job.category] || "border border-slate-300 text-slate-700 bg-transparent"}`}>
                         {job.category}
                       </span>
                     </div>

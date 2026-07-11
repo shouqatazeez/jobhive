@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -38,6 +39,7 @@ interface Job {
   id: string;
   title: string;
   company: string;
+  logo: string | null;
   location: string;
   type: string;
   status: string;
@@ -327,8 +329,12 @@ export default function DashboardPage() {
                     className="p-5 flex items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-50 shrink-0">
-                        <Building2 className="w-5 h-5 text-indigo-600" />
+                      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-slate-100 shrink-0 overflow-hidden p-1.5">
+                        {job.logo ? (
+                          <Image src={job.logo} alt={job.company} width={40} height={40} className="object-contain w-full h-full" />
+                        ) : (
+                          <Building2 className="w-5 h-5 text-indigo-600" />
+                        )}
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-slate-900 truncate">
