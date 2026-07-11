@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Card } from "@/components/ui/card";
@@ -13,25 +14,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Job {
   id: string;
   company: string;
+  logo: string | null;
   location: string;
 }
 
 interface Company {
   name: string;
+  logo: string | null;
   locations: string[];
   jobCount: number;
 }
-
-const cardColors = [
-  "bg-indigo-500",
-  "bg-cyan-500",
-  "bg-green-500",
-  "bg-orange-500",
-  "bg-purple-500",
-  "bg-teal-500",
-  "bg-blue-500",
-  "bg-rose-500",
-];
 
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -55,6 +47,7 @@ export default function CompaniesPage() {
           } else {
             map.set(job.company, {
               name: job.company,
+              logo: job.logo,
               locations: [job.location],
               jobCount: 1,
             });
@@ -121,19 +114,19 @@ export default function CompaniesPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map((company, index) => (
+              {filtered.map((company) => (
                 <Link
                   key={company.name}
                   href={`/jobs?q=${encodeURIComponent(company.name)}`}
                 >
                   <Card className="group p-6 border-slate-200 hover:border-indigo-200 hover:shadow-md transition-all cursor-pointer h-full">
                     <div className="flex items-start gap-4">
-                      <div
-                        className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 ${
-                          cardColors[index % cardColors.length]
-                        }`}
-                      >
-                        <Building2 className="w-6 h-6 text-white" />
+                      <div className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0 bg-slate-100 overflow-hidden p-2">
+                        {company.logo ? (
+                          <Image src={company.logo} alt={company.name} width={48} height={48} className="object-contain w-full h-full" />
+                        ) : (
+                          <Building2 className="w-6 h-6 text-indigo-600" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-base font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">

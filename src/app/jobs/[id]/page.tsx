@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { Card } from "@/components/ui/card";
@@ -170,8 +171,12 @@ export default function JobDetailPage() {
             <div className="lg:col-span-2 flex flex-col gap-6">
               <Card className="p-6 sm:p-8 border-slate-200">
                 <div className="flex items-start gap-4">
-                  <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-indigo-50 shrink-0">
-                    <Building2 className="w-7 h-7 text-indigo-600" />
+                  <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-white border border-slate-100 shrink-0 overflow-hidden p-2">
+                    {job.logo ? (
+                      <Image src={job.logo} alt={job.company} width={44} height={44} className="object-contain w-full h-full" />
+                    ) : (
+                      <Building2 className="w-7 h-7 text-indigo-600" />
+                    )}
                   </div>
                   <div className="flex-1">
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
