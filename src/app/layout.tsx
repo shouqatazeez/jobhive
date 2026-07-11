@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "JobHive - Find Your Dream Job",
+  title: "JobHive",
   description:
     "A modern job board platform connecting talented professionals with top companies.",
 };
