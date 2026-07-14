@@ -12,6 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { JobListSkeleton } from "@/components/skeletons/job-card-skeleton";
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
   Search,
   MapPin,
   Briefcase,
@@ -86,8 +94,12 @@ function JobsContent() {
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [selectedType, setSelectedType] = useState(searchParams.get("type") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalJobs, setTotalJobs] = useState(0);
+  const pageSize = 8;
 
-  const fetchJobs = async (type?: string, category?: string) => {
+  const fetchJobs = async (page?: number, type?: string, category?: string) => {
     setLoading(true);
     const params = new URLSearchParams();
     if (keyword) params.set("q", keyword);
@@ -96,11 +108,15 @@ function JobsContent() {
     const c = category ?? selectedCategory;
     if (t) params.set("type", t);
     if (c && c !== "All Categories") params.set("category", c);
+    params.set("page", String(page ?? currentPage));
+    params.set("pageSize", String(pageSize));
 
     try {
       const res = await fetch(`/api/jobs?${params.toString()}`);
       const data = await res.json();
-      setJobs(data);
+      setJobs(data.jobs);
+      setTotalPages(data.totalPages);
+      setTotalJobs(data.total);
     } catch (error) {
       console.error("Failed to fetch jobs:", error);
     } finally {
@@ -109,29 +125,31 @@ function JobsContent() {
   };
 
   useEffect(() => {
-    const loadJobs = async () => {
-      setLoading(true);
-      const params = new URLSearchParams();
-      if (selectedType) params.set("type", selectedType);
-      if (selectedCategory && selectedCategory !== "All Categories")
-        params.set("category", selectedCategory);
-
-      try {
-        const res = await fetch(`/api/jobs?${params.toString()}`);
-        const data = await res.json();
-        setJobs(data);
-      } catch (error) {
-        console.error("Failed to fetch jobs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadJobs();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchJobs(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedType, selectedCategory]);
+
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
+    setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchJobs();
+    setCurrentPage(1);
+    fetchJobs(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    fetchJobs(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -144,7 +162,7 @@ function JobsContent() {
               Find your dream job
             </h1>
             <p className="text-slate-500 mt-1">
-              Browse {jobs.length} jobs available
+              Browse {totalJobs} jobs available
             </p>
           </div>
 
@@ -190,12 +208,11 @@ function JobsContent() {
                   {jobTypes.map((type) => (
                     <button
                       key={type.value}
-                      onClick={() => setSelectedType(type.value)}
-                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                        selectedType === type.value
+                      onClick={() => handleTypeChange(type.value)}
+                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${selectedType === type.value
                           ? "bg-indigo-50 text-indigo-700 font-medium"
                           : "text-slate-600 hover:bg-slate-50"
-                      }`}
+                        }`}
                     >
                       {type.label}
                     </button>
@@ -211,12 +228,11 @@ function JobsContent() {
                   {categories.map((cat) => (
                     <button
                       key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                        selectedCategory === cat
+                      onClick={() => handleCategoryChange(cat)}
+                      className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${selectedCategory === cat
                           ? "bg-indigo-50 text-indigo-700 font-medium"
                           : "text-slate-600 hover:bg-slate-50"
-                      }`}
+                        }`}
                     >
                       {cat}
                     </button>
@@ -299,6 +315,37 @@ function JobsContent() {
                     </Link>
                   ))}
                 </div>
+              )}
+
+              {/* Pagination */}
+              {!loading && totalPages > 1 && (
+                <Pagination className="mt-8">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => handlePageChange(page)}
+                          isActive={page === currentPage}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               )}
             </div>
           </div>

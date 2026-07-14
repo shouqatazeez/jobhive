@@ -13,6 +13,8 @@ export async function GET(req: Request) {
     const type = searchParams.get("type") || "";
     const featured = searchParams.get("featured");
     const limit = searchParams.get("limit");
+    const page = searchParams.get("page");
+    const pageSize = searchParams.get("pageSize");
 
     const where: Record<string, unknown> = {
       status: "OPEN",
@@ -43,6 +45,35 @@ export async function GET(req: Request) {
     // Filter by job type
     if (type) {
       where.type = type;
+    }
+
+    if (page && pageSize) {
+      const pageNum = parseInt(page);
+      const size = parseInt(pageSize);
+      const skip = (pageNum - 1) * size;
+
+      const [jobs, total] = await Promise.all([
+        prisma.job.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: size,
+          include: {
+            employer: {
+              select: { name: true, avatar: true },
+            },
+          },
+        }),
+        prisma.job.count({ where }),
+      ]);
+
+      return NextResponse.json({
+        jobs,
+        total,
+        page: pageNum,
+        pageSize: size,
+        totalPages: Math.ceil(total / size),
+      });
     }
 
     const jobs = await prisma.job.findMany({
