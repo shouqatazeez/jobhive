@@ -19,6 +19,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
   Search,
   MapPin,
@@ -99,11 +100,14 @@ function JobsContent() {
   const [totalJobs, setTotalJobs] = useState(0);
   const pageSize = 8;
 
+  const debouncedKeyword = useDebounce(keyword, 300);
+  const debouncedLocation = useDebounce(location, 300);
+
   const fetchJobs = async (page?: number, type?: string, category?: string) => {
     setLoading(true);
     const params = new URLSearchParams();
-    if (keyword) params.set("q", keyword);
-    if (location) params.set("location", location);
+    if (debouncedKeyword) params.set("q", debouncedKeyword);
+    if (debouncedLocation) params.set("location", debouncedLocation);
     const t = type ?? selectedType;
     const c = category ?? selectedCategory;
     if (t) params.set("type", t);
@@ -128,7 +132,7 @@ function JobsContent() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchJobs(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedType, selectedCategory]);
+  }, [selectedType, selectedCategory, debouncedKeyword, debouncedLocation]);
 
   const handleTypeChange = (type: string) => {
     setSelectedType(type);
@@ -143,7 +147,6 @@ function JobsContent() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchJobs(1);
   };
 
   const handlePageChange = (page: number) => {
